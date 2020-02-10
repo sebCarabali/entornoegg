@@ -1,0 +1,38 @@
+version: "3.1"
+services:
+  pgsql:
+    image: postgres
+    container_name: postgress-service
+    working_dir: /applications
+    volumes:
+      - ./data/:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
+    ports:
+      - 5432:5432
+  angular:
+     build: client/
+     container_name: app-test-webclient
+     ports:
+        - 4200:4200
+    
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  webserver:
+    build: server/
+    container_name: app-test-webserver
+    ports:
+      - "8081:80"
+  php-fpm:
+    build: phpdocker/php-fpm
+    container_name: app-test-php-fpm
+    working_dir: /home/project
+    volumes:
+      #- ./server:/var/www
+      - ./server:/home/project
+      - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
